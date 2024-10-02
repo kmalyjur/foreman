@@ -29,6 +29,8 @@
       <%= text_f f, :login, :disabled => msg.present? , :label_help => msg %>
       <%= text_f f, :firstname %>
       <%= text_f f, :lastname %>
+      <%# works only when the mail enabled is already selected and saved %>
+      <%= text_f f, :mail, required: @user.mail_enabled %> 
       <%= text_f f, :mail %>
       <% unless @user == User.current %>
         <%= checkbox_f f, :disabled %>

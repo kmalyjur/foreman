@@ -81,9 +81,13 @@ class User < ApplicationRecord
   scope :completer_scope, ->(opts) { visible }
   scope :enabled, -> { where(disabled: false) }
 
+  # validates :mail, :email => true, :allow_blank => true #
+  # validates :mail, :presence => true, :on => :update,
+  #           :if => proc { |u| !AuthSourceHidden.where(:id => u.auth_source_id).any? && u.mail_enabled }
+
   validates :mail, :email => true, :allow_blank => true
   validates :mail, :presence => true, :on => :update,
-            :if => proc { |u| !AuthSourceHidden.where(:id => u.auth_source_id).any? && u.mail_enabled }
+            :if => proc { |u| u.mail_enabled } # does not work
 
   validates :locale, :format => { :with => /\A\w{2}([_-]\w{2})?\Z/ }, :allow_blank => true, :if => proc { |user| user.respond_to?(:locale) }
   before_validation :normalize_locale
@@ -98,7 +102,7 @@ class User < ApplicationRecord
 
   validates :login, :presence => true, :uniqueness => {:case_sensitive => false, :message => N_("already exists")},
                     :format => {:with => /\A[[:alnum:]_\-@.\\$#+]*\Z/}, :length => {:maximum => 100},
-                    :exclusion => { in: %w(current_user) }
+                    :exclusion => { in: %w(current_user) } #
   validates :auth_source_id, :presence => true
   validates :password_hash, :presence => true, :if => proc { |user| user.manage_password? }
   validates :password, :confirmation => true, :if => proc { |user| user.manage_password? },
