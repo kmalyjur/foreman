@@ -15,6 +15,7 @@ const combinedConfig = {
   extends: [
     ...(lintCoreConfig.extends || []),
     ...(lintGenericConfig.extends || []),
+    'prettier',
   ],
 };
 
